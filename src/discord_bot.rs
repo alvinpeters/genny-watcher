@@ -1,15 +1,17 @@
 mod commands;
 mod jobs;
 
-use std::sync::Arc;
+use crate::Result;
 use axum::body::Bytes;
 use axum::extract::State;
 use axum::http::{HeaderMap, StatusCode};
 use axum::Json;
 use clap::Parser;
-use serenity::all::{CreateInteractionResponse, CreateInteractionResponseMessage, Interaction, Verifier};
+use serenity::all::{
+    CreateInteractionResponse, CreateInteractionResponseMessage, Interaction, Verifier,
+};
 use serenity::http::Http;
-use crate::Result;
+use std::sync::Arc;
 
 pub(super) struct DiscordBotState {
     verifier: Verifier,
@@ -64,35 +66,28 @@ pub(super) async fn handle_interaction(
         .to_str()
         .map_err(|_| StatusCode::UNAUTHORIZED)?;
 
-    verifier.verify(signature, timestamp, &body)
+    verifier
+        .verify(signature, timestamp, &body)
         .map_err(|_| StatusCode::UNAUTHORIZED)?;
 
-    let Json(interaction): Json<Interaction> = Json::from_bytes(&body)
-        .map_err(|_| StatusCode::UNAUTHORIZED)?;
+    let Json(interaction): Json<Interaction> =
+        Json::from_bytes(&body).map_err(|_| StatusCode::UNAUTHORIZED)?;
 
     let response = match interaction {
-        Interaction::Ping(c) => {
-
-
-            CreateInteractionResponse::Pong
-        },
+        Interaction::Ping(c) => CreateInteractionResponse::Pong,
         Interaction::Command(c) => {
-
             todo!()
-        },
+        }
         Interaction::Autocomplete(a) => {
-
-
             todo!()
-        },
+        }
         Interaction::Component(com) => {
             todo!()
-        },
+        }
         Interaction::Modal(fz) => {
-
             todo!()
-        },
-        _ => todo!()
+        }
+        _ => todo!(),
     };
 
     Ok(response.into())

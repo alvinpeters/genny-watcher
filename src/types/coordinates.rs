@@ -1,5 +1,5 @@
-use std::fmt::{Display, Formatter};
 use rkyv::{Archive, Deserialize, Serialize};
+use std::fmt::{Display, Formatter};
 
 #[derive(Clone, Copy, Archive, Serialize, Deserialize, PartialEq, Eq, Debug)]
 #[repr(u8)]
@@ -32,7 +32,7 @@ enum WithinRange {
     Inside,
     Outside,
     /// Within x, y, but z is missing for either
-    Maybe
+    Maybe,
 }
 
 #[derive(Copy, Clone, Archive, Serialize, Deserialize)]
@@ -57,7 +57,11 @@ impl UE4Coordinates {
             return WithinRange::Outside;
         }
 
-        fn within_range_without_z(this: &UE4Coordinates, other: &UE4Coordinates, range: i32) -> WithinRange {
+        fn within_range_without_z(
+            this: &UE4Coordinates,
+            other: &UE4Coordinates,
+            range: i32,
+        ) -> WithinRange {
             let x_res = (other.x - this.x).pow(2);
             let y_res = (other.y - this.y).pow(2);
 
@@ -141,16 +145,11 @@ impl From<ArkCoordinates> for UE4Coordinates {
         let map = ark_coords.map;
         let map_scale = map.get_scale();
 
-        let x = (ark_coords.longitude * map_scale.scale).round() as i32 + map_scale.longitude_origin;
+        let x =
+            (ark_coords.longitude * map_scale.scale).round() as i32 + map_scale.longitude_origin;
         let y = (ark_coords.latitude * map_scale.scale).round() as i32 + map_scale.latitude_origin;
 
-        Self {
-            x,
-            y,
-            z: None,
-            map,
-        }
-
+        Self { x, y, z: None, map }
     }
 }
 
@@ -189,9 +188,7 @@ mod tests {
     };
 
     #[test]
-    fn compare_distance() {
-
-    }
+    fn compare_distance() {}
 
     /// Test coordiante conversion from UE4 to ARK coordinates and vice versa.
     /// Will fail if:
@@ -209,6 +206,5 @@ mod tests {
         assert_eq!(ue4_ab_red_surface.x, UE4_AB_RED_SURFACE.x);
         assert_eq!(ue4_ab_red_surface.y, UE4_AB_RED_SURFACE.y);
         assert_eq!(ue4_ab_red_surface.map, UE4_AB_RED_SURFACE.map);
-
     }
 }

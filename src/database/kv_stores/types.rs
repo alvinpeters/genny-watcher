@@ -1,7 +1,3 @@
-pub(crate) trait AsKey {
+pub(crate) trait AsKey {}
 
-}
-
-pub(crate) trait ToValue {
-
-}
+pub(crate) trait ToValue {}

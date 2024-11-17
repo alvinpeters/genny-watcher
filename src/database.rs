@@ -6,8 +6,12 @@ mod models;
 #[cfg(feature = "kv_stores")]
 mod kv_stores;
 
-enum Database {
+enum Database {}
 
+impl Database {
+    pub(crate) fn start_trx(&self) {
+
+    }
 }
 
 pub(crate) trait DbModel: Sized {

@@ -5,6 +5,4 @@ struct TlsCert {
     pub_cert_chain: Vec<u8>,
 }
 
-pub(crate) struct ServerSettings {
-
-}
+pub(crate) struct ServerSettings {}

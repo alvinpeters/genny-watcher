@@ -1,7 +1,7 @@
+use super::coordinates::UE4Coordinates;
+use crate::types::fuel::{ElementOrShards, Fuel};
 use clap::builder::Str;
 use rkyv::{Archive, Deserialize, Serialize};
-use crate::types::fuel::{ElementOrShards, Fuel};
-use super::coordinates::{UE4Coordinates};
 
 pub(crate) trait TrackedStructure {
     fn coords(&self) -> UE4Coordinates;

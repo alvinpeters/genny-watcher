@@ -1,14 +1,14 @@
-use std::convert::Infallible;
-use std::fs::File;
-use std::net::SocketAddr;
-use std::path::PathBuf;
 use anyhow::{anyhow, Context};
 use clap::{Args, Parser};
 use rkyv::{Archive, Deserialize, Serialize};
 use rustls::internal::msgs::handshake::CertificateChain;
 use rustls::ServerConfig;
-use rustls_pki_types::{pem, CertificateDer, PrivateKeyDer};
 use rustls_pki_types::pem::PemObject;
+use rustls_pki_types::{pem, CertificateDer, PrivateKeyDer};
+use std::convert::Infallible;
+use std::fs::File;
+use std::net::SocketAddr;
+use std::path::PathBuf;
 
 use crate::Result;
 
@@ -37,8 +37,12 @@ fn get_priv_key_from_file(path: &str) -> Result<Vec<u8>> {
 
 fn get_pub_cert_chain_from_file(path: &str) -> Result<Vec<Vec<u8>>> {
     // For validation
-    let certs = CertificateDer::pem_file_iter(path)
-        .map_err(|_| anyhow!("failed to get TLS public certificate chain from file: {}", path))?;
+    let certs = CertificateDer::pem_file_iter(path).map_err(|_| {
+        anyhow!(
+            "failed to get TLS public certificate chain from file: {}",
+            path
+        )
+    })?;
     let mut cert_der_vec = vec![];
 
     for cert_res in certs {
@@ -62,8 +66,6 @@ impl TryFrom<TlsConfig> for ServerConfig {
     type Error = anyhow::Error;
 
     fn try_from(tls_config: TlsConfig) -> Result<Self, Self::Error> {
-
-
         let Some(priv_key_der_bytes) = tls_config.tls_priv_key else {
             todo!()
         };
@@ -71,8 +73,7 @@ impl TryFrom<TlsConfig> for ServerConfig {
             todo!()
         };
 
-        let priv_key = PrivateKeyDer::try_from(priv_key_der_bytes)
-            .map_err(|err| anyhow!(err))?;
+        let priv_key = PrivateKeyDer::try_from(priv_key_der_bytes).map_err(|err| anyhow!(err))?;
 
         let mut cert_chain = vec![];
         for cert_bytes in pub_cert_der_bytes {
@@ -89,12 +90,10 @@ impl TryFrom<TlsConfig> for ServerConfig {
     }
 }
 
-
 #[derive(Parser)]
 pub(super) struct CliConfig {
     #[command(flatten)]
     pub(super) bind_config: BindConfig,
     #[command(flatten)]
-    pub(super) tls_config: TlsConfig
+    pub(super) tls_config: TlsConfig,
 }
-

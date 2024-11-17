@@ -1,3 +1,1 @@
-pub(crate) struct RdbStore {
-
-}
+pub(crate) struct RdbStore {}
